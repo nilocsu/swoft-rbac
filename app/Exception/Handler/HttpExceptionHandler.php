@@ -46,7 +46,7 @@ class HttpExceptionHandler extends AbstractHttpErrorHandler
         // Debug is false
         if (!APP_DEBUG) {
             $statusCode = 200;
-            if ($e->getCode() != 1 || $e->getCode() !== 0) {
+            if (Response::PHRASES[$e->getCode()]) {
                 $statusCode = $e->getCode();
             }
             $data = [
@@ -56,7 +56,8 @@ class HttpExceptionHandler extends AbstractHttpErrorHandler
             // Debug is true
             return $response->withData($data)->withStatus($statusCode)
                 ->withHeader('Access-Control-Allow-Origin', '*')
-                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                ->withHeader('Access-Control-Allow-Headers',
+                    'X-Requested-With, Content-Type, Accept, Origin, Authorization')
                 ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
         }
 

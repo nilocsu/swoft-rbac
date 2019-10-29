@@ -3,7 +3,6 @@
 
 namespace App\Admin\Model\Dao;
 
-use App\Model\Entity\TRole;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Db\DB;
 
@@ -19,14 +18,13 @@ class RoleDao
     public function findUserRole(string $username)
     {
         $sql  = <<<sql
-        select r.perms
+        select r.id, r.perms, r.name
         from t_role r
                  left join t_user_role ur on (r.id = ur.role_id)
                  left join t_user u on (u.id = ur.user_id)
         where u.username = ?
 sql;
-        $list = DB::select($sql, [$username]);
-        return array_column($list, 'perms');
+        return DB::select($sql, [$username]);
     }
 
 

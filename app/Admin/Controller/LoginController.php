@@ -73,6 +73,10 @@ class LoginController
         ]);
     }
 
+    public function register(Request $request){
+
+    }
+
     /**
      * @RequestMapping(route="/index/{username}")
      * @param string $username

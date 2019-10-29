@@ -4,9 +4,10 @@
 namespace App\Admin\Model\Logic;
 
 use App\Admin\Common\Service\CacheService;
+use App\Admin\Common\Util\Utils;
 use App\Admin\Exception\AdminException;
-use App\Admin\Model\Dao\UserRoleDao;
 use App\Admin\Model\Data\UserData;
+use App\Admin\Util\ResultData;
 use App\Model\Entity\TUser;
 use App\Model\Entity\TUserRole;
 use Carbon\Carbon;
@@ -29,12 +30,6 @@ class AdministratorLogic
      * @var UserData
      */
     private $userData;
-
-    /**
-     * @Inject()
-     * @var UserRoleDao
-     */
-    private $userRoleDao;
 
     /**
      * @param string $username
@@ -60,15 +55,18 @@ class AdministratorLogic
      */
     public function findUserList(array $data)
     {
-        $page     = max($data['page'] ?? 1, 1);
-        $pageSize = max($data['pageSize'] ?? 20, 0) ?? 20;
-        $offset   = ($page - 1) * $pageSize;
-
-        return [
-            'total' => TUser::count(),
-            'page'  => $page,
-            'data'  => TUser::offset($offset)->limit((int)$pageSize)->orderBy('id', 'asc')->get(),
-        ];
+        $query = TUser::query();
+        if (!empty($data['filter'])) {
+            $filter = (array)json_decode($data['filter']);
+            if (!empty($filter['name'])) {
+                $query->where('real_name', 'like', $filter['name'] . '%');
+            }
+            if (!empty($filter['email'])) {
+                $query->where('email', 'like', $filter['email'] . '%');
+            }
+        }
+        if (!empty($data['sortBy']) && $data['sortBy'] === 'realName') $data['sortBy'] = 'real_name';
+        return Utils::pageSort($query, $data['sortBy'], $data['descending'] ? 'desc' : 'asc');
     }
 
     public function updateLoginTime(string $username)
@@ -81,6 +79,9 @@ class AdministratorLogic
 
     public function createUser(array $data)
     {
+        if ($this->findByName($data['username'])) {
+            throw new AdminException('账号已存在', ResultData::CODE_ERROR);
+        };
         $user = new TUser();
         $user->setUsername($data['username']);
         $user->setRealName($data['realName']);
@@ -91,7 +92,7 @@ class AdministratorLogic
         $user->setStatus($data['status']);
         $user->save();
 
-        if (isset($data['roles'])) {
+        if (!empty($data['roles'])) {
             // 保存用户角色
             $this->setUserRoles($user->getId(), $data['roles']);
             // 将用户相关信息保存到 Redis中
@@ -114,13 +115,13 @@ class AdministratorLogic
 
 
         // todo 重新将用户信息，用户角色信息，用户权限信息 加载到 redis中
-        $this->cacheService->saveUser($user->getUsername());
-        if (isset($data['roles'])) {
-            $this->userRoleDao->deleteByUserId($user->getId());
-            $this->setUserRoles($user->getId(), $data['roles']);
-            $this->cacheService->saveRoles($user->getUsername());
-            $this->cacheService->savePermissions($user->getUsername());
-        }
+//        $this->cacheService->saveUser($user->getUsername());
+//        if (!empty($data['roles'])) {
+//            $this->userRoleDao->deleteByUserId($user->getId());
+//            $this->setUserRoles($user->getId(), $data['roles']);
+//            $this->cacheService->saveRoles($user->getUsername());
+//            $this->cacheService->savePermissions($user->getUsername());
+//        }
     }
 
     /**
@@ -149,12 +150,12 @@ class AdministratorLogic
         $user = TUser::where('id', $userId)->firstOrFail();
         /// 更新用户角色关系
         if ($action == 1) {
-            if (!empty($userRole)){
+            if (!empty($userRole)) {
                 throw new AdminException('角色已存在,', 500);
             }
             $this->setUserRoles($userId, [$roleId]);
         } else { // 删除角色关系
-            if (empty($userRole)){
+            if (empty($userRole)) {
                 throw new AdminException('角色不存在存在', 404);
             }
             TUserRole::where('role_id', $roleId)->where('user_id', $userId)->delete();

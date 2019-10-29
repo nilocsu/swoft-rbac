@@ -180,13 +180,13 @@ class MenuLogic
      */
     private function findMenuCondition(Builder $builder, $query)
     {
-        if (isset($query['menuName'])) {
+        if (!empty($query['menuName'])) {
             $builder->where('menu_name', 'like', $query['menuName'] . '%');
         }
-        if (isset($query['type'])) {
+        if (!empty($query['type'])) {
             $builder->where('type', $query['type']);
         }
-        if (isset($query['createTimeFrom']) && isset($query['createTimeTo'])) {
+        if (!empty($query['createTimeFrom']) && !empty($query['createTimeTo'])) {
             $builder->whereBetween('created_at', [$query['createTimeFrom'], $query['createTimeTo']]);
         }
     }

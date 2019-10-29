@@ -20,7 +20,7 @@ class CacheService
      * @Inject()
      * @var RoleDao
      */
-    private $roleLogic;
+    private $roleDao;
 
 
     /**
@@ -46,18 +46,25 @@ class CacheService
     }
 
     /**
+     * 获取某一列的值
      * @param string $username
-     * @return string[]|bool|mixed|\Swoft\Db\Eloquent\Model|static
+     * @param null|string $column 不为空获取某一列的值
+     * @return array|bool|mixed
      */
-    public function getRoles(string $username)
+    public function getRoles(string $username, ?string $column = null)
     {
         $roles = Redis::get(FebConstant::USER_ROLE_CACHE_PREFIX . $username);
         if (empty($roles)) {
-            $roles = $this->roleLogic->findUserRole($username);
+            $roles = $this->roleDao->findUserRole($username);
             Redis::set(FebConstant::USER_ROLE_CACHE_PREFIX . $username, serialize($roles));
+        }
+        if (is_string($roles)) {
+            $roles = unserialize($roles);
+        }
+        if (empty($column)) {
             return $roles;
         }
-        return unserialize($roles);
+        return array_column($roles, $column);
     }
 
 
@@ -81,7 +88,8 @@ class CacheService
         return $this->menuDao->findUserMenus($username);
     }
 
-    public function saveUser(string $username){
+    public function saveUser(string $username)
+    {
         $user = TUser::where('username', $username)->firstOrFail();
         $this->deleteUser($username);
         Redis::set(FebConstant::USER_CACHE_PREFIX . $username, serialize($user->attributesToArray()));
@@ -89,12 +97,13 @@ class CacheService
 
     public function saveRoles(string $username)
     {
-        $roleList = $this->roleLogic->findUserRole($username);
+        $roleList = $this->roleDao->findUserRole($username);
         $this->deleteRoles($username);
         Redis::set(FebConstant::USER_ROLE_CACHE_PREFIX . $username, serialize($roleList));
     }
 
-    public function savePermissions(string $username){
+    public function savePermissions(string $username)
+    {
         $roleList = $this->menuDao->findUserPermissions($username);
         $this->deletePermissions($username);
         Redis::set(FebConstant::USER_PERMISSION_CACHE_PREFIX . $username, serialize($roleList));

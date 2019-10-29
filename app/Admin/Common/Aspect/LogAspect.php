@@ -64,7 +64,6 @@ class LogAspect
         $log->setTime($time);
         $log->setParams(json_encode($request->getParsedBody()));
         $log->save();
-
         return $result;
     }
 }

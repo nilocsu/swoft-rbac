@@ -40,7 +40,6 @@ class RequiresRolesAspect
     public function around(ProceedingJoinPoint $proceedingJoinPoint)
     {
 
-//        $args      = $proceedingJoinPoint->getArgs();
         $target    = $proceedingJoinPoint->getTarget();
         $method    = $proceedingJoinPoint->getMethod();
         $className = get_class($target);
@@ -48,7 +47,7 @@ class RequiresRolesAspect
 
         $requiresRoles = RequiresRoleRegister::getRequiresRoles($className, $method);
 
-        $rolesList = $this->cacheService->getRoles(Auth::admin()->getUsername());
+        $rolesList = $this->cacheService->getRoles(Auth::admin()->getUsername(), 'perms');
         $access    = false;
 
         if ($requiresRoles['logical'] === Logical:: OR) {
@@ -58,12 +57,14 @@ class RequiresRolesAspect
                     break;
                 }
             }
+        } elseif ($requiresRoles['logical'] === Logical:: NOT) {
+            $access = !!array_diff($requiresRoles['value'], $rolesList);
         } else {
             // 返回空数组则是包含权限，否则不包含
-            $access = !!array_diff($requiresRoles['value'], $rolesList);
+            $access = !array_diff($requiresRoles['value'], $rolesList);
         }
         if (!$access) {
-            throw new AuthorizationException('access', 403);
+            throw new AuthorizationException('Forbidden', 403);
         }
 
         return $proceedingJoinPoint->proceed();

@@ -4,6 +4,7 @@
 namespace App\Admin\Model\Logic;
 
 
+use App\Admin\Common\Util\Utils;
 use App\Admin\Model\Dao\RoleDao;
 use App\Admin\Model\Data\UserData;
 use App\Model\Entity\TRole;
@@ -11,7 +12,6 @@ use App\Model\Entity\TRoleMenu;
 use App\Model\Entity\TUserRole;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Http\Message\Request;
 
 /**
  * @Bean()
@@ -49,33 +49,26 @@ class RoleLogic
     public function findRoles(array $data)
     {
         $query = TRole::query();
-        if (isset($data['createTimeFrom']) && isset($data['createTimeTo'])) {
+        if (!empty($data['createTimeFrom']) && !empty($data['createTimeTo'])) {
             $query->whereBetween('created_at', [$data['createTimeFrom'], $data['createTimeTo']]);
         }
         $roles = [];
-        if (isset($data['filter'])) {
+        if (!empty($data['filter']) && !empty($data['filter'])) {
             $filter = (array)json_decode($data['filter']);
-            if (isset($filter['name'])) {
+            if (!empty($filter['name'])) {
                 $query->where('name', 'like', $filter['name'] . '%');
             }
-            if (isset($filter['perms'])) {
+            if (!empty($filter['perms'])) {
                 $query->where('perms', 'like', $filter['perms'] . '%');
             }
-            if (isset($filter['username'])) {
+            if (!empty($filter['username'])) {
                 $roles = $this->userData->getUserRoles($filter['username']);
             }
         }
 
-        $page     = max($data['page'] ?? 1, 1);
-        $pageSize = max($data['pageSize'] ?? 20, 0) ?? 20;
-        $offset   = ($page - 1) * $pageSize;
+//        $data =
+          return Utils::pageSort($query, $data['sortBy'], $data['descending'] ? 'desc' : 'asc');
 
-        return [
-            'total'   => $query->count(),
-            'page'    => $page,
-            'data'    => $query->offset($offset)->limit((int)$pageSize)->get(),
-            'hasRole' => $roles,
-        ];
     }
 
     public function getRole(int $roleId)

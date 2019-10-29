@@ -3,6 +3,7 @@
 
 namespace App\Admin\Model\Logic;
 
+use App\Admin\Common\Util\Utils;
 use App\Model\Entity\TLog;
 use Swoft\Bean\Annotation\Mapping\Bean;
 
@@ -12,31 +13,26 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 class LogLogic
 {
     /**
-     * @param array $query
+     * @param array $data
      * @return array
      */
-    public function findLogs(array $query)
+    public function findLogs(array $data)
     {
         $log = TLog::query();
-        if (isset($query['username'])) {
-            $log->where('username', $query['username']);
-        }
-        if (isset($query['operation'])) {
-            $log->where('operation', $query['operation']);
-        }
-        if (isset($query['createTimeFrom']) && isset($query['createTimeTo'])) {
-            $log->whereBetween('created_at', [$query['createTimeFrom'], $query['createTimeTo']]);
+        if (!empty($data['filter'])) {
+            $filter = (array)json_decode($data['filter']);
+            if (!empty($filter['username']) && $filter['username'] !== '') {
+                $log->where('username', $filter['username']);
+            }
+            if (!empty($filter['operation']) && $filter['operation'] !== '') {
+                $log->where('operation', $filter['operation']);
+            }
+            if (!empty($filter['createTimeFrom']) && !empty($filter['createTimeTo'])) {
+                $log->whereBetween('created_at', [$filter['createTimeFrom'], $filter['createTimeTo']]);
+            }
         }
 
-        $page     = max($data['page'] ?? 1, 1);
-        $pageSize = max($data['pageSize'] ?? 20, 0) ?? 20;
-        $offset   = ($page - 1) * $pageSize;
-
-        return [
-            'total' => $log->count(),
-            'page'  => $page,
-            'data'  => $log->offset($offset)->limit((int)$pageSize)->get(),
-        ];
+        return Utils::pageSort($log, $data['sortBy'], $data['descending'] ? 'desc' : 'asc');
     }
 
     /**
