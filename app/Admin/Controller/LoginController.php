@@ -78,7 +78,7 @@ class LoginController
     }
 
     /**
-     * @RequestMapping(route="/index/{username}")
+     * @RequestMapping(route="/index/{username}", method={RequestMethod::GET})
      * @param string $username
      * @return array
      */

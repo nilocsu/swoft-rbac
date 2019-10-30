@@ -3,6 +3,7 @@
 
 namespace App\Admin\Controller;
 
+use App\Admin\Common\Annotation\Mapping\Log;
 use App\Admin\Common\Annotation\Mapping\RequiresPermissions;
 use App\Admin\Common\Util\Auth;
 use App\Admin\Common\Util\Utils;
@@ -18,7 +19,6 @@ use Swoft\Http\Message\Request;
 use Swoft\Http\Server\Annotation\Mapping\Controller;
 use Swoft\Http\Server\Annotation\Mapping\RequestMapping;
 use Swoft\Http\Server\Annotation\Mapping\RequestMethod;
-use Swoft\Log\Helper\Log;
 use Swoft\Validator\Annotation\Mapping\Validate;
 use Swoft\Validator\Exception\ValidatorException;
 
@@ -113,6 +113,7 @@ class AdministratorController
     /**
      * @RequestMapping(route="admin/{id}/role", method={RequestMethod::PUT}, params={"id"="\d+"})
      * @RequiresPermissions(value={"role:update"})
+     * @Log("更新用户角色")
      * @param int $id
      * @param Request $request
      * @return array
@@ -171,6 +172,7 @@ class AdministratorController
     /**
      * @RequestMapping(route="admin", method={RequestMethod::POST})
      * @RequiresPermissions(value={"user:add"})
+     * @Log("新增用户")
      * @Validate(validator="AdminValidator")
      * @param Request $request
      * @return array
@@ -207,6 +209,7 @@ class AdministratorController
      * @RequestMapping(route="admin/{id}", method={RequestMethod::PUT}, params={"id"="\d+"})
      * @RequiresPermissions(value={"user:update"})
      * @Validate(validator="AdminValidator", unfields={"username", "password"})
+     * @Log("更新用户")
      * @param int $id
      * @param Request $request
      * @return array
@@ -229,6 +232,7 @@ class AdministratorController
     /**
      * @RequestMapping(route="admin", method={RequestMethod::DELETE})
      * @RequiresPermissions(value={"user:delete"})
+     * @Log("删除用户")
      * @param Request $request
      * @return array
      * @throws ValidatorException
@@ -256,6 +260,7 @@ class AdministratorController
     /**
      * @RequestMapping(route="admin/profile", method={RequestMethod::PUT})
      * @Validate(validator="AdminValidator", unfields={"username", "status"})
+     * @Log("更新用户状态")
      * @param Request $request
      * @return array
      */
@@ -267,7 +272,7 @@ class AdministratorController
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            $msg = '删除用户失败';
+            $msg = '更新用户状态失败';
             Utils::log($msg, $e);
             return ResultData::failed($msg);
         }
@@ -276,6 +281,7 @@ class AdministratorController
 
     /**
      * @RequestMapping(route="admin/avatar", method={RequestMethod::PUT})
+     * @Log("用户更新头像")
      * @param Request $request
      * @return array
      * @throws ValidatorException
@@ -292,7 +298,7 @@ class AdministratorController
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            $msg = '用户头像更新失败';
+            $msg = '用户更新头像失败';
             Utils::log($msg, $e);
             return ResultData::failed($msg);
         }
@@ -301,6 +307,7 @@ class AdministratorController
 
     /**
      * @RequestMapping(route="admin/password", method={RequestMethod::PUT})
+     * @Log("用户更新密码")
      * @param Request $request
      * @return array
      * @throws ValidatorException

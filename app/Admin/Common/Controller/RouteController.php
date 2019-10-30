@@ -5,6 +5,7 @@ namespace App\Admin\Common\Controller;
 
 
 use App\Admin\Common\Annotation\Mapping\Log;
+use App\Admin\Util\ResultData;
 use Swoft\Bean\BeanFactory;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Server\Annotation\Mapping\Controller;
@@ -20,7 +21,6 @@ class RouteController
 {
     /**
      * @RequestMapping("http/routes", method=RequestMethod::GET)
-     * @Log("获取路由")
      * @param Request $request
      * @return array|string
      * @throws \Throwable
@@ -33,9 +33,7 @@ class RouteController
         if ($asString === 1) {
             return $router->toString();
         }
-        return [
-            'routes' => $router->getRoutes(),
-        ];
+        return ResultData::success($router->getRoutes());
     }
 
     /**
@@ -50,7 +48,7 @@ class RouteController
         }
         /** @var \Swoft\WebSocket\Server\Router\HandlerMapping $router */
         $router = \bean('wsRouter');
-        return $router->getRoutes();
+        return ResultData::success($router->getRoutes());
     }
 
     /**
@@ -64,15 +62,15 @@ class RouteController
         }
         /** @var \Swoft\Rpc\Server\Router\HandlerMapping $router */
         $router  = \bean('serviceRouter');
-        $rawList = $router->getRoutes();
-        $routes  = [];
-        foreach ($rawList as $key => $route) {
-            $routes[] = [
-                'serviceKey' => $key,
-                'class'      => $route[0],
-                'method'     => $route[1],
-            ];
-        }
-        return $routes;
+//        $rawList = $router->getRoutes();
+//        $routes  = [];
+//        foreach ($rawList as $key => $route) {
+//            $routes[] = [
+//                'serviceKey' => $key,
+//                'class'      => $route[0],
+//                'method'     => $route[1],
+//            ];
+//        }
+        return ResultData::success($router->getRoutes());
     }
 }

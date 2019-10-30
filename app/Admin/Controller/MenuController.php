@@ -137,44 +137,4 @@ class MenuController
         return ResultData::success();
     }
 
-
-    /**
-     * @RequestMapping(route="menu/{id}/parentId", method={RequestMethod::GET}, params={"id":"\d+"})
-     * @RequiresPermissions(value={"menu:update"})
-     * @param int $id
-     * @return array
-     */
-    public function getMenuParentIds(int $id)
-    {
-        if ($id == 0){
-            $data = [0];
-        }else{
-            $data = $this->menuLogic->findMenuParentIds($id);
-        }
-        return ResultData::success($data);
-    }
-
-    /**
-     * @RequestMapping(route="menu/excel", method={RequestMethod::POST})
-     * @RequiresPermissions(value={"menu:export"})
-     * @param Request $request
-     * @return array
-     */
-    public function export(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            // todo 导出Excel
-//            $this->menuLogic->findMenuList($request->input());
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            $msg = "修改菜单/按钮失败";
-            Utils::log($msg, $e);
-            return ResultData::failed($msg);
-        }
-        return ResultData::success();
-    }
-
-
 }

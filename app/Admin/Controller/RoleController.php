@@ -191,26 +191,4 @@ class RoleController
         return ResultData::success();
     }
 
-    /**
-     * @RequestMapping(route="role/excel", method={RequestMethod::POST})
-     * @RequiresPermissions(value={"menu:export"})
-     * @param Request $request
-     * @return array
-     */
-    public function export(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            // todo 导出Excel
-//            $this->roleLogic->findRoles($request->input());
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            $msg = "修改菜单/按钮失败";
-            Utils::log($msg, $e);
-            return ResultData::failed($msg);
-        }
-        return ResultData::success();
-    }
-
 }

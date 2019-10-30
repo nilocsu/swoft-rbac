@@ -31,7 +31,6 @@ class LogController
 
     /**
      * @RequestMapping(route="log", method={RequestMethod::GET})
-     * @RequiresPermissions(value={"log:view"})
      * @param Request $request
      * @return array
      */

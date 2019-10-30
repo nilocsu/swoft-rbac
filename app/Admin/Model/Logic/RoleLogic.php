@@ -52,7 +52,7 @@ class RoleLogic
         if (!empty($data['createTimeFrom']) && !empty($data['createTimeTo'])) {
             $query->whereBetween('created_at', [$data['createTimeFrom'], $data['createTimeTo']]);
         }
-        $roles = [];
+//        $roles = [];
         if (!empty($data['filter']) && !empty($data['filter'])) {
             $filter = (array)json_decode($data['filter']);
             if (!empty($filter['name'])) {
@@ -61,12 +61,11 @@ class RoleLogic
             if (!empty($filter['perms'])) {
                 $query->where('perms', 'like', $filter['perms'] . '%');
             }
-            if (!empty($filter['username'])) {
-                $roles = $this->userData->getUserRoles($filter['username']);
-            }
+//            if (!empty($filter['username'])) {
+//                $roles = $this->userData->getUserRoles($filter['username']);
+//            }
         }
 
-//        $data =
           return Utils::pageSort($query, $data['sortBy'], $data['descending'] ? 'desc' : 'asc');
 
     }
