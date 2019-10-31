@@ -59,7 +59,7 @@ class UserData
     public function getUserRouters(string $username)
     {
         $menu = $this->menuDao->findUserMenus($username);
-        return Utils::routeMenuToTree($menu);
+        return Utils::listToTree($menu);
     }
 
     /**

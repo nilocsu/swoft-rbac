@@ -78,13 +78,14 @@ class LoginController
     }
 
     /**
-     * @RequestMapping(route="/index/{username}", method={RequestMethod::GET})
+     * @RequestMapping(route="/system/index/{username}", method={RequestMethod::GET})
      * @param string $username
      * @return array
      */
     public function index(string $username)
     {
         return ResultData::success([
+            'totalVisitCount'     => $this->loginLogic->findTotalVisitCount(),
             'todayVisitCount'     => $this->loginLogic->findTodayVisitCount(),
             'todayIp'             => $this->loginLogic->findTodayIp(),
             'lastSevenVisitCount' => $this->loginLogic->findLastSevenDaysVisitCount(null),

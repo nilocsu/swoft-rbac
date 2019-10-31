@@ -5,6 +5,7 @@ namespace App\Admin\Common\Controller;
 
 use App\Admin\Common\Util\Utils;
 use App\Admin\Util\ResultData;
+use Swoft\Co;
 use Swoft\Db\DB;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
@@ -26,6 +27,7 @@ class InformationController
     {
         $mysqlVersion = DB::select('select version()');
 
+        $str = Co::exec('vmstat 1 1');
         return [
             'mysqlVersion'       => substr($mysqlVersion[0]['version()'], 0, 6),
             'upSize'             => env('PACKAGE_MAX_LENGTH'),
@@ -37,6 +39,8 @@ class InformationController
                 'swooleVersion' => \SWOOLE_VERSION,
                 'swoftVersion'  => \Swoft::VERSION,
             ],
+            'cpu' => $str,
+            'startTime'=>\config('jwt.startTime')
         ];
     }
 

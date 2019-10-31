@@ -113,6 +113,7 @@ class MenuLogic
     {
         $menu = new TMenu();
         $menu->setMenuName($data['menuName']);
+        $menu->setName($data['name']??'');
         $menu->setPath($data['path'] ?? '');
         $menu->setParentId($data['parentId']);
         $menu->setComponent($data['component'] ?? '');
@@ -130,6 +131,7 @@ class MenuLogic
         $menu = TMenu::where('id', $id)->firstOrFail();
         $perms = $data['perms'] == $menu->getPerms() ? true : false;
         $menu->setMenuName($data['menuName']);
+        $menu->setName($data['name']??'');
         $menu->setPath($data['path'] ?? '');
         $menu->setParentId($data['parentId']);
         $menu->setComponent($data['component'] ?? '');
@@ -168,6 +170,7 @@ class MenuLogic
             $menu->setParentId(0);
         }
         if ($menu->getType() === '1') {
+            $menu->setName(null);
             $menu->setPath(null);
             $menu->setIcon(null);
             $menu->setComponent(null);

@@ -21,10 +21,10 @@ class LogLogic
         $log = TLog::query();
         if (!empty($data['filter'])) {
             $filter = (array)json_decode($data['filter']);
-            if (!empty($filter['username']) && $filter['username'] !== '') {
+            if (!empty($filter['username'])) {
                 $log->where('username', $filter['username']);
             }
-            if (!empty($filter['operation']) && $filter['operation'] !== '') {
+            if (!empty($filter['operation'])) {
                 $log->where('operation', $filter['operation']);
             }
             if (!empty($filter['createTimeFrom']) && !empty($filter['createTimeTo'])) {

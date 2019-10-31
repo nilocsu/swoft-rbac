@@ -47,6 +47,15 @@ class TMenu extends Model
     private $menuName;
 
     /**
+     * 对应组件name
+     *
+     * @Column()
+     *
+     * @var string|null
+     */
+    private $name;
+
+    /**
      * 对应路由path
      *
      * @Column()
@@ -147,6 +156,16 @@ class TMenu extends Model
     public function setMenuName(string $menuName): void
     {
         $this->menuName = $menuName;
+    }
+
+    /**
+     * @param string|null $name
+     *
+     * @return void
+     */
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
     }
 
     /**
@@ -251,6 +270,14 @@ class TMenu extends Model
     public function getMenuName(): ?string
     {
         return $this->menuName;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
     }
 
     /**

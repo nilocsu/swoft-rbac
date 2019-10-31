@@ -76,52 +76,6 @@ class Utils
      * @param string $root
      * @return array
      */
-    public static function routeMenuToTree(
-        array $list,
-        $pk = 'id',
-        $pid = 'parentId',
-        $child = 'children',
-        $root = '0'
-    ) {
-
-        if (count($list) == 1) {
-            return $list;
-        }
-
-        $tree = [];
-        if (is_array($list)) {
-            $refer = [];
-            foreach ($list as $key => $data) {
-                $list[$key]['mate'] = [
-                    'cache' => true,
-                ];
-                $refer[$data[$pk]]  = &$list[$key];
-            }
-            foreach ($list as $key => $data) {
-                $parentId = $data[$pid];
-                if ($root == $parentId) {
-                    $tree[] = &$list[$key];
-                } else {
-                    if (isset($refer[$parentId])) {
-                        $parent           = &$refer[$parentId];
-                        $parent[$child][] = &$list[$key];
-                    }
-                }
-            }
-        }
-        return $tree;
-    }
-
-
-    /**
-     * 把返回的数据集转换成Tree
-     * @param array $list
-     * @param string $pk
-     * @param string $pid
-     * @param string $child
-     * @param string $root
-     * @return array
-     */
     public static function listToTree(
         array $list,
         $pk = 'id',

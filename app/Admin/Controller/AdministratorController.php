@@ -260,7 +260,6 @@ class AdministratorController
     /**
      * @RequestMapping(route="admin/profile", method={RequestMethod::PUT})
      * @Validate(validator="AdminValidator", unfields={"username", "status"})
-     * @Log("更新用户状态")
      * @param Request $request
      * @return array
      */
@@ -281,7 +280,6 @@ class AdministratorController
 
     /**
      * @RequestMapping(route="admin/avatar", method={RequestMethod::PUT})
-     * @Log("用户更新头像")
      * @param Request $request
      * @return array
      * @throws ValidatorException
@@ -307,7 +305,6 @@ class AdministratorController
 
     /**
      * @RequestMapping(route="admin/password", method={RequestMethod::PUT})
-     * @Log("用户更新密码")
      * @param Request $request
      * @return array
      * @throws ValidatorException

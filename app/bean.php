@@ -131,15 +131,21 @@ return [
     ],
     'wsServer'          => [
         'class'   => WebSocketServer::class,
-        'port'    => 18308,
+        'port'    => 3000,
         'on'      => [
             // Enable http handle
             SwooleEvent::REQUEST => bean(RequestListener::class),
+            SwooleEvent::TASK   => bean(TaskListener::class),  // Enable task must task and finish event
+            SwooleEvent::FINISH => bean(FinishListener::class)
         ],
         'debug'   => 1,
         // 'debug'   => env('SWOFT_DEBUG', 0),
         /* @see WebSocketServer::$setting */
         'setting' => [
+            'task_worker_num'       => 3,
+            'worker_num'            => 1,
+            'task_enable_coroutine' => true,
+            'package_max_length'    => 167772160,    // 20M
             'log_file' => alias('@runtime/swoole.log'),
         ],
     ],

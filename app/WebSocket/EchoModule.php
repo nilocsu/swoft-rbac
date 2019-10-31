@@ -10,8 +10,11 @@
 
 namespace App\WebSocket;
 
+use Swoft\Co;
 use Swoft\Http\Message\Request;
+use Swoft\Redis\Redis;
 use Swoft\Session\Session;
+use Swoft\WebSocket\Server\Annotation\Mapping\OnClose;
 use Swoft\WebSocket\Server\Annotation\Mapping\OnMessage;
 use Swoft\WebSocket\Server\Annotation\Mapping\OnOpen;
 use Swoft\WebSocket\Server\Annotation\Mapping\WsModule;
@@ -33,7 +36,6 @@ class EchoModule
      */
     public function onOpen(Request $request, int $fd): void
     {
-        Session::mustGet()->push("Opened, welcome #{$fd}!");
     }
 
     /**
@@ -44,5 +46,18 @@ class EchoModule
     public function onMessage(Server $server, Frame $frame): void
     {
         $server->push($frame->fd, 'Recv: ' . $frame->data);
+    }
+
+
+    /**
+     * @OnClose()
+     * @param Server $server
+     * @param int $fd
+     * @author su
+     * Date 19-5-5 下午12:29
+     */
+    public function onClose(Server $server, int $fd)
+    {
+        Redis::del('li');
     }
 }

@@ -38,6 +38,7 @@ CREATE TABLE `t_menu` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '菜单/按钮ID',
   `parent_id` bigint(20) NOT NULL COMMENT '上级菜单ID',
   `menu_name` varchar(50) NOT NULL COMMENT '菜单/按钮名称',
+  `name` varchar(50) DEFAULT NULL COMMENT '对应组件name',
   `path` varchar(255) DEFAULT NULL COMMENT '对应路由path',
   `component` varchar(255) DEFAULT NULL COMMENT '对应路由组件component',
   `perms` varchar(50) DEFAULT NULL COMMENT '权限标识',

@@ -4,6 +4,7 @@
 namespace App\Admin\Model\Logic;
 
 use App\Admin\Common\Util\Ip2Region;
+use App\Admin\Common\Util\Utils;
 use App\Admin\Model\Dao\LoginLogDao;
 use App\Model\Entity\TLoginLog;
 use Swoft\Bean\Annotation\Mapping\Bean;
@@ -38,11 +39,24 @@ class LoginLogic
     }
 
 
+    /**
+     * @return int
+     */
+    public function findTotalVisitCount(){
+        return TLoginLog::count();
+    }
+
+    /**
+     * @return mixed
+     */
     public function findTodayVisitCount()
     {
         return $this->logLoginDao->findTodayVisitCount();
     }
 
+    /**
+     * @return mixed
+     */
     public function findTodayIp()
     {
         return $this->logLoginDao->findTodayIp();
@@ -55,5 +69,30 @@ class LoginLogic
     public function findLastSevenDaysVisitCount(?string $username)
     {
         return $this->logLoginDao->findLastSevenDaysVisitCount($username);
+    }
+
+    public function findList(array $data)
+    {
+        $login = TLoginLog::query();
+
+        if (!empty($data['filter'])) {
+            $filter = (array)json_decode($data['filter']);
+            if (!empty($filter['username'])) {
+                $login->where('username', $filter['username']);
+            }
+            if (!empty($filter['createTimeFrom']) && !empty($filter['createTimeTo'])) {
+                $login->whereBetween('created_at', [$filter['createTimeFrom'], $filter['createTimeTo']]);
+            }
+        }
+        return Utils::pageSort($login, $data['sortBy'], $data['descending'] ? 'desc' : 'asc');
+    }
+
+
+    /**
+     * @param array $data
+     */
+    public function delete(array $data)
+    {
+        TLoginLog::whereIn('id', $data)->delete();
     }
 }
