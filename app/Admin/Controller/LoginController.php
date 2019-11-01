@@ -46,10 +46,16 @@ class LoginController
     public function login(Request $request)
     {
         $username = $request->post('username');
+        $password = $request->post('password');
         /* @var TUser $user */
         $user = $this->adminLogic->findByName($username);
+
+        $errorMessage = "用户名或密码错误";
         if (empty($user)) {
-            throw new Exception('用户名或密码错误');
+            throw new Exception($errorMessage);
+        }
+        if (strcmp($user->getPassword(), md5(md5($password)))) {
+            throw new Exception($errorMessage);
         }
         if ($user->getStatus() == 0) {
             throw new Exception('账号已被锁定,请联系管理员！');
@@ -61,19 +67,16 @@ class LoginController
             $this->loginLogic->create($request);
             DB::commit();
         } catch (\Throwable $e) {
-            var_dump([$e->getFile(), $e->getMessage(), $e->getLine()]);
             DB::rollBack();
             return ResultData::failed('认证失败');
         }
-        $token = JwtService::encode($user->toArray());
-        return ResultData::success([
-            'id'          => $user->getId(),
-            'username'    => $username,
-            'accessToken' => $token,
-        ]);
+        $data                = $user->toArray();
+        $data['accessToken'] = JwtService::encode($user->toArray());
+        return ResultData::success($data);
     }
 
-    public function register(Request $request){
+    public function register(Request $request)
+    {
 
     }
 
@@ -85,10 +88,10 @@ class LoginController
     public function index(string $username)
     {
         return ResultData::success([
-            'totalVisitCount'     => $this->loginLogic->findTotalVisitCount(),
-            'todayVisitCount'     => $this->loginLogic->findTodayVisitCount(),
-            'todayIp'             => $this->loginLogic->findTodayIp(),
-            'lastSevenVisitCount' => $this->loginLogic->findLastSevenDaysVisitCount(null),
+            'totalVisitCount'         => $this->loginLogic->findTotalVisitCount(),
+            'todayVisitCount'         => $this->loginLogic->findTodayVisitCount(),
+            'todayIp'                 => $this->loginLogic->findTodayIp(),
+            'lastSevenVisitCount'     => $this->loginLogic->findLastSevenDaysVisitCount(null),
             'lastSevenUserVisitCount' => $this->loginLogic->findLastSevenDaysVisitCount($username),
         ]);
     }

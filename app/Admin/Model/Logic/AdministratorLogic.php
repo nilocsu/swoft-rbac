@@ -85,7 +85,7 @@ class AdministratorLogic
         $user = new TUser();
         $user->setUsername($data['username']);
         $user->setRealName($data['realName']);
-        $user->setPassword($data['password']);
+        $user->setPassword(md5(md5($data['password'])));
         $user->setDeptId($data['deptId'] ?? 0);
         $user->setEmail($data['email']);
         $user->setMobile($data['mobile']);

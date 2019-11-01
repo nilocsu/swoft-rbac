@@ -10,6 +10,7 @@ use App\Admin\Common\Util\Utils;
 use App\Admin\Exception\AuthorizationException;
 use App\Admin\Model\Data\UserData;
 use App\Admin\Model\Logic\AdministratorLogic;
+use App\Admin\Model\Logic\DeptLogic;
 use App\Admin\Model\Logic\RoleLogic;
 use App\Admin\Util\ResultData;
 use App\Model\Entity\TRole;
@@ -47,6 +48,11 @@ class AdministratorController
      */
     private $roleLogic;
 
+    /**
+     * @Inject()
+     * @var DeptLogic
+     */
+    private $deptLogic;
 
     /**
      * @RequestMapping(route="admin", method={RequestMethod::GET})
@@ -85,15 +91,14 @@ class AdministratorController
      */
     public function getProfileMenus()
     {
-        // 只能查查自己的路由表
-        // 管理员除外
+        // 只能查查当前用户的路由表
         $user = Auth::admin();
 
         return ResultData::success([
             'menu'        => $this->userData->getUserRouters($user->getUsername()),
             'permissions' => $this->userData->getUserPermissions($user->getUsername()),
             'roles'       => $this->userData->getUserRoles($user->getUsername()),
-            'id'          => $user,
+            'dept'        => $this->deptLogic->findDeptName($user->getDeptId()),
         ]);
     }
 
@@ -177,7 +182,7 @@ class AdministratorController
      * @param Request $request
      * @return array
      */
-    public function createUser(Request $request)
+    public function addUser(Request $request)
     {
         DB::beginTransaction();
         try {

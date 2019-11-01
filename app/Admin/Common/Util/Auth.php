@@ -14,9 +14,7 @@ class Auth
      */
     public static function admin(){
         $admin = Context::get()->getRequest()->admin;
-        $user = new TUser();
-        $user->setUsername($admin['username']);
-        $user->setId($admin['id']);
+        $user = TUser::new($admin);
         return $user;
     }
 }

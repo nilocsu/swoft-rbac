@@ -64,7 +64,7 @@ class RequiresRolesAspect
             $access = !array_diff($requiresRoles['value'], $rolesList);
         }
         if (!$access) {
-            throw new AuthorizationException('Forbidden', 403);
+            throw new AuthorizationException('Permission denied', 403);
         }
 
         return $proceedingJoinPoint->proceed();

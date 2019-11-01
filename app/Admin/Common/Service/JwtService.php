@@ -18,10 +18,7 @@ class JwtService
             'iat'  => time(),                         //签发时间
             'exp'  => time() + $exp,                  //jwt的过期时间，过期时间必须要大于签发时间
             'nbf'  => time(),                         //该时间前不接受处理该token
-            'data' => [
-                'id'       => $data['id'],
-                'username' => $data['username'],        //用户名
-            ],
+            'data' => $data,
         ];
         return JWT::encode($token, \config('jwt.privateKey'), \config('jwt.type'));
     }
@@ -29,7 +26,7 @@ class JwtService
     public static function decode()
     {
         $token = context()->getRequest()->getHeaderLine('Authorization');
-        $auth = JWT::decode($token, \config('jwt.publicKey'), ['type' => \config('jwt.type')]);
+        $auth  = JWT::decode($token, \config('jwt.publicKey'), ['type' => \config('jwt.type')]);
         return ((array)$auth)['data'];
     }
 }
