@@ -14,9 +14,10 @@ class DeptLogic
 {
     /**
      * @param array $data
+     * @param bool $tree
      * @return array
      */
-    public function findDeptList(array $data = [])
+    public function findDeptList(array $data = [], $tree = false)
     {
         $query = TDept::query();
         if (!empty($data['name'])) {
@@ -29,7 +30,10 @@ class DeptLogic
         if (empty($query)) {
             return [];
         }
-        return Utils::listToTree($query->toArray());
+        if($tree){
+            return Utils::listToTree($query->toArray());
+        }
+        return $query->toArray();
     }
 
     /**

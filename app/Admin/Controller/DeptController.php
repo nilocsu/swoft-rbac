@@ -34,6 +34,16 @@ class DeptController
      */
     public function tree(Request $request)
     {
+        return ResultData::success($this->deptLogic->findDeptList($request->input(), true));
+    }
+
+    /**
+     * @RequestMapping(route="dept")
+     * @param Request $request
+     * @return array
+     */
+    public function list(Request $request)
+    {
         return ResultData::success($this->deptLogic->findDeptList($request->input()));
     }
 
@@ -61,21 +71,21 @@ class DeptController
 
     /**
      * @RequestMapping(route="dept/{id}",  method={RequestMethod::PUT}, params={})
-     * @Validate(validator="IdsValidator")
      * @RequiresPermissions(value={"dept:update"})
-     * @Log("删除部门")
+     * @Log("更新部门")
      * @param int $id
      * @param Request $request
      * @return array
      */
-    public function updateDept(int $id, Request $request){
+    public function updateDept(int $id, Request $request)
+    {
         DB::beginTransaction();
         try {
             $this->deptLogic->updateDept($id, $request->post());
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            $msg = "删除部门失败";
+            $msg = "更新部门失败";
             Utils::log($msg, $e);
             return ResultData::failed($msg);
         }

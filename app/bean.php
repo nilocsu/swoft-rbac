@@ -37,7 +37,7 @@ return [
     ],
     'httpServer'        => [
         'class'    => HttpServer::class,
-        'port'     => 3000,
+        'port'     => (int) \env('HTTP_PORT'),
         'listener' => [
             'rpc' => bean('rpcServer')
         ],
@@ -72,16 +72,17 @@ return [
     ],
     'db'                => [
         'class'    => Database::class,
-        'dsn'      => 'mysql:dbname=role;host=127.0.0.1',
+        'dsn'      => \env('DB_DSN'),
         'charset'  => 'utf8mb4',
-        'username' => 'root',
-        'password' => 'root',
+        'username' => \env('DB_USERNAME'),
+        'password' => \env('DB_PASSWORD'),
     ],
     'db2'               => [
         'class'      => Database::class,
-        'dsn'        => 'mysql:dbname=role;host=127.0.0.1',
-        'username'   => 'root',
-        'password'   => 'root',
+        'dsn'      => \env('DB_DSN'),
+        'charset'  => 'utf8mb4',
+        'username' => \env('DB_USERNAME'),
+        'password' => \env('DB_PASSWORD'),
 //        'dbSelector' => bean(DbSelector::class)
     ],
     'db2.pool' => [
@@ -90,9 +91,10 @@ return [
     ],
     'db3'               => [
         'class'    => Database::class,
-        'dsn'      => 'mysql:dbname=role;host=127.0.0.1',
-        'username' => 'root',
-        'password' => 'root'
+        'dsn'      => \env('DB_DSN'),
+        'charset'  => 'utf8mb4',
+        'username' => \env('DB_USERNAME'),
+        'password' => \env('DB_PASSWORD'),
     ],
     'db3.pool'          => [
         'class'    => Pool::class,
@@ -131,7 +133,7 @@ return [
     ],
     'wsServer'          => [
         'class'   => WebSocketServer::class,
-        'port'    => 3000,
+        'port'     => (int) \env('HTTP_PORT'),
         'on'      => [
             // Enable http handle
             SwooleEvent::REQUEST => bean(RequestListener::class),

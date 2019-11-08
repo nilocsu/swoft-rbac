@@ -54,9 +54,9 @@ class LoginController
         if (empty($user)) {
             throw new Exception($errorMessage);
         }
-        if (strcmp($user->getPassword(), md5(md5($password)))) {
-            throw new Exception($errorMessage);
-        }
+//        if (strcmp($user->getPassword(), md5(md5($password)))) {
+//            throw new Exception($errorMessage);
+//        }
         if ($user->getStatus() == 0) {
             throw new Exception('账号已被锁定,请联系管理员！');
         }

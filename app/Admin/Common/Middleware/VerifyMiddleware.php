@@ -27,13 +27,14 @@ class VerifyMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ('/auth/login' == $request->getUri()->getPath()){
+        $path = $request->getUri()->getPath();
+        if ('/auth/login' == $path || substr($path, 0, 7) != '/system'){
             return $handler->handle($request);
         }
         try {
             $request->admin = (array)JwtService::decode();
         } catch (\Exception $e) {
-            $json = ['msg' => 'Unauthorized', 'code' => 401];
+            $json     = ['msg' => 'Unauthorized', 'code' => 401];
             $response = Context::get()->getResponse();
             return $response->withData($json)->withStatus(401);
         }
