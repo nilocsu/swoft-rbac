@@ -5,9 +5,11 @@ namespace App\Admin\Controller;
 
 
 use App\Admin\Common\Service\JwtService;
+use App\Admin\Exception\AdminException;
 use App\Admin\Model\Logic\AdministratorLogic;
 use App\Admin\Model\Logic\LoginLogic;
 use App\Admin\Util\ResultData;
+use App\Exception\ApiException;
 use App\Model\Entity\TUser;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Db\DB;
@@ -52,13 +54,13 @@ class LoginController
 
         $errorMessage = "用户名或密码错误";
         if (empty($user)) {
-            throw new Exception($errorMessage);
+            throw new AdminException($errorMessage, 1);
         }
-//        if (strcmp($user->getPassword(), md5(md5($password)))) {
-//            throw new Exception($errorMessage);
-//        }
+        if (strcmp($user->getPassword(), md5(md5($password))) !== 0) {
+            throw new AdminException($errorMessage, 1);
+        }
         if ($user->getStatus() == 0) {
-            throw new Exception('账号已被锁定,请联系管理员！');
+            throw new AdminException('账号已被锁定,请联系管理员！', 1);
         }
         DB::beginTransaction();
         try {

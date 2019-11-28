@@ -46,7 +46,7 @@ class HttpExceptionHandler extends AbstractHttpErrorHandler
         // Debug is false
         if (!APP_DEBUG) {
             $statusCode = 200;
-            if (Response::PHRASES[$e->getCode()]) {
+            if (isset(Response::PHRASES[$e->getCode()])) {
                 $statusCode = $e->getCode();
             }
             $data = [

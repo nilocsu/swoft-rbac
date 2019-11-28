@@ -5,7 +5,7 @@ namespace App\Admin\Common\Annotation\Parser;
 
 
 use App\Admin\Common\Annotation\Mapping\RequiresRoles;
-use App\Admin\Exception\RequiresPermissionsException;
+use App\Admin\Common\Exception\RequiresRolesException;
 
 /**
  * @since 2.0
@@ -19,7 +19,7 @@ class RequiresRoleRegister
      * @param string $className
      * @param string $method
      * @param RequiresRoles $requiresRoles
-     * @throws RequiresPermissionsException
+     * @throws RequiresRolesException
      */
     public static function registerRequiresRoles(
         string $className,
@@ -27,7 +27,7 @@ class RequiresRoleRegister
         RequiresRoles $requiresRoles
     ) {
         if (isset(self::$requiresRoles[$className][$method])) {
-            throw new RequiresPermissionsException(
+            throw new RequiresRolesException(
                 sprintf('`@RequiresRoles` must be only one on method(%s->%s)!', $className, $method)
             );
         }

@@ -6,6 +6,7 @@ namespace App\Admin\Validator;
 use Swoft\Validator\Annotation\Mapping\Enum;
 use Swoft\Validator\Annotation\Mapping\IsInt;
 use Swoft\Validator\Annotation\Mapping\IsString;
+use Swoft\Validator\Annotation\Mapping\Length;
 use Swoft\Validator\Annotation\Mapping\Mobile;
 use Swoft\Validator\Annotation\Mapping\NotEmpty;
 use Swoft\Validator\Annotation\Mapping\Validator;
@@ -25,6 +26,7 @@ class AdminValidator
     /**
      * @IsString()
      * @NotEmpty(message="密码不能为空")
+     * @Length(min=6, max=15, message="密码必须是6-15位数字和字母组合")
      * @var string
      */
     private $password;

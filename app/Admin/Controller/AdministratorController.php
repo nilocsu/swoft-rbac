@@ -152,29 +152,6 @@ class AdministratorController
     }
 
     /**
-     *
-     * @RequestMapping(route="admin/profile", method={RequestMethod::GET})
-     * @return array
-     */
-    public function profile()
-    {
-        $roleIds     = [];
-        $username    = Auth::admin()->getUsername();
-        $roles       = $this->roleLogic->findUserRole($username);
-        $permissions = $this->userData->getUserPermissions($username);
-
-        /* @var TRole $role */
-        foreach ($roles as $role) {
-            $roleIds[] = $role->getName();
-        }
-        return ResultData::success([
-            'user'        => $this->adminLogic->findByName($username),
-            'roles'       => $roleIds,
-            'permissions' => $permissions,
-        ]);
-    }
-
-    /**
      * @RequestMapping(route="admin", method={RequestMethod::POST})
      * @RequiresPermissions(value={"user:add"})
      * @Log("新增用户")
@@ -263,8 +240,19 @@ class AdministratorController
     }
 
     /**
+     *
+     * @RequestMapping(route="admin/profile", method={RequestMethod::GET})
+     * @return array
+     */
+    public function profile()
+    {
+        $username = Auth::admin()->getUsername();
+        return ResultData::success($this->adminLogic->findByName($username));
+    }
+
+    /**
      * @RequestMapping(route="admin/profile", method={RequestMethod::PUT})
-     * @Validate(validator="AdminValidator", unfields={"username", "status"})
+     * @Validate(validator="AdminValidator", unfields={"username", "status", "password"})
      * @param Request $request
      * @return array
      */
@@ -312,18 +300,22 @@ class AdministratorController
      * @RequestMapping(route="admin/password", method={RequestMethod::PUT})
      * @param Request $request
      * @return array
-     * @throws ValidatorException
+     * @throws \Exception
      */
     public function updatePassword(Request $request)
     {
-        $password = $request->post('password');
-        if (empty($ids) || !is_array($ids)) {
-            throw new ValidatorException('password 不能为空');
+        $password        = $request->post('oldPassword');
+        $newPassword     = $request->post('newPassword');
+        $confirmPassword = $request->post('confirmPassword');
+        if (empty($newPassword) || empty($confirmPassword)) {
+            throw new \Exception('密码不能为空');
         }
-
+        if (strcmp($confirmPassword, $newPassword) !== 0) {
+            throw new \Exception('两次输入的密码不一致');
+        }
         DB::beginTransaction();
         try {
-            $this->adminLogic->updatePassword(Auth::admin()->getUsername(), $password);
+            $this->adminLogic->updatePassword(Auth::admin()->getUsername(), $password, $newPassword);
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();

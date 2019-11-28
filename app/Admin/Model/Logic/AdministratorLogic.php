@@ -110,18 +110,7 @@ class AdministratorLogic
         $user->setSex($data['sex']);
         $user->setStatus($data['status']);
         $user->setDescription($data['description']);
-        $user->setMobile(Carbon::now()->toDateTimeString());
         $user->update();
-
-
-        // todo 重新将用户信息，用户角色信息，用户权限信息 加载到 redis中
-//        $this->cacheService->saveUser($user->getUsername());
-//        if (!empty($data['roles'])) {
-//            $this->userRoleDao->deleteByUserId($user->getId());
-//            $this->setUserRoles($user->getId(), $data['roles']);
-//            $this->cacheService->saveRoles($user->getUsername());
-//            $this->cacheService->savePermissions($user->getUsername());
-//        }
     }
 
     /**
@@ -177,7 +166,8 @@ class AdministratorLogic
     public function updateProfile(string $username, array $data)
     {
         /* @var TUser $user */
-        $user = TUser::where('username', $username)->first();
+        $user = TUser::where('username', $username)->firstOrFail();
+        $user->setRealName($data['realName']);
         $user->setEmail($data['email']);
         $user->setMobile($data['mobile']);
         $user->setDescription($data['description']);
@@ -197,14 +187,15 @@ class AdministratorLogic
         $this->cacheService->saveUser($username);
     }
 
-    public function updatePassword(string $username, string $password)
+    public function updatePassword(string $username, string $oldPassword, string $newPassword)
     {
         /* @var TUser $user */
-        $user = TUser::where('username', $username)->first();
-        $user->setPassword($password);
+        $user = TUser::where('username', $username)->firstOrFail();
+        if (strcmp($user->getPassword(), md5(md5($oldPassword))) !== 0) {
+            throw new \Exception('原密码不正确"');
+        }
+        $user->setPassword(md5(md5($newPassword)));
         $user->update();
-        // 重新缓存用户信息
-        $this->cacheService->saveUser($username);
     }
 
     public function setUserRoles(int $userId, array $roles)

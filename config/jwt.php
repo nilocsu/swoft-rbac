@@ -43,5 +43,4 @@ bwIDAQAB
     'userExp'=>'86400',  //普通账号过期时间
     'type'=>'RS256',//加密类型
     'iss'=>'https://localhost',
-    'startTime'=> time(),
 ];

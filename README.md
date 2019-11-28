@@ -15,6 +15,7 @@ swoft-rabc是一款简单高效的后台权限管理系统，使用swoft,d2admin
 
 ### 权限控制
 使用权限注解控制：菜单权限控制(RequiresPermissions)、 角色权限控制注解(RequiresRoles)
+
 我们可以在Controller的方法上通过自定义权限注解进行权限控制，菜单权限控制用RequiresPermissions注解，比如下面这个方法只有当用户拥有user:add权限才能访问：
 ```php
     /**
