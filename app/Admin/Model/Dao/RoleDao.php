@@ -17,7 +17,7 @@ class RoleDao
      */
     public function findUserRole(string $username)
     {
-        $sql  = <<<sql
+        $sql = <<<sql
         select r.id, r.perms, r.name
         from t_role r
                  left join t_user_role ur on (r.id = ur.role_id)
@@ -34,7 +34,7 @@ sql;
      */
     public function findUserRoleIds(string $username)
     {
-        $sql  = <<<sql
+        $sql = <<<sql
         select r.id
         from t_role r
                  left join t_user_role ur on (r.id = ur.role_id)

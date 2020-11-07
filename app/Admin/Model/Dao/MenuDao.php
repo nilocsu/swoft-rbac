@@ -18,7 +18,7 @@ class MenuDao
      */
     public function findUserPermissions(string $username)
     {
-        $sql  = <<<sql
+        $sql = <<<sql
 select distinct m.perms
         from t_role r
                  left join t_user_role ur on (r.id = ur.role_id)
@@ -39,7 +39,7 @@ sql;
      */
     public function findUserMenus(string $username)
     {
-        $sql  = <<<sql
+        $sql = <<<sql
 select m.*
         from t_menu m
         where m.type <> 1
@@ -69,7 +69,7 @@ sql;
      */
     public function findUserIdsByMenuId(int $menuId)
     {
-        $sql  = <<<sql
+        $sql = <<<sql
 SELECT
     user_id
 FROM
@@ -83,19 +83,19 @@ sql;
 
     public function findParentIds(int $menuId)
     {
-        $sql  = <<<sql
+        $sql = <<<sql
 SELECT T2.id
-FROM ( 
-    SELECT 
-        @r AS _id, 
-        (SELECT @r := parent_id FROM t_menu WHERE id = _id) AS parent_id, 
-        @l := @l + 1 AS lvl 
-    FROM 
-        (SELECT @r := ?, @l := 0) vars, 
-        t_menu h 
-    WHERE @r <> 0) T1 
-JOIN t_menu T2 
-ON T1._id = T2.id 
+FROM (
+    SELECT
+        @r AS _id,
+        (SELECT @r := parent_id FROM t_menu WHERE id = _id) AS parent_id,
+        @l := @l + 1 AS lvl
+    FROM
+        (SELECT @r := ?, @l := 0) vars,
+        t_menu h
+    WHERE @r <> 0) T1
+JOIN t_menu T2
+ON T1._id = T2.id
 ORDER BY T1.lvl DESC;
 sql;
         $list = DB::select($sql, [$menuId]);

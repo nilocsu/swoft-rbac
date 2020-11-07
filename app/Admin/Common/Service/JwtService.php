@@ -20,6 +20,7 @@ class JwtService
             'nbf'  => time(),                         //该时间前不接受处理该token
             'data' => $data,
         ];
+
         return JWT::encode($token, \config('jwt.privateKey'), \config('jwt.type'));
     }
 

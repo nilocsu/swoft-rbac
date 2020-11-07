@@ -39,31 +39,34 @@ class LogAspect
         // 执行方法
         $result = $joinPoint->proceed();
 //        $args      = $joinPoint->getArgs();
-        $target    = $joinPoint->getTarget();
-        $method    = $joinPoint->getMethod();
-        $className = get_class($target);
-        $className = Proxy::getOriginalClassName($className);
+        // 减少等待时间，主要是读取ip地址文件带来的阻塞
+        sgo(function () use ($joinPoint, $t1){
+            $target    = $joinPoint->getTarget();
+            $method    = $joinPoint->getMethod();
+            $className = get_class($target);
+            $className = Proxy::getOriginalClassName($className);
 
 
-        $value = LogRegister::getLogs($className, $method);
+            $value = LogRegister::getLogs($className, $method);
 
-        $request = Context::get()->getRequest();
-        $remoteAddress = $request->getServerParams()["remote_addr"];
-        // 设置 IP 地址
-        $ip2Region = new Ip2Region(\Swoft::getAlias('@resource') . '/data/ip2region.db');
-        $ip = $ip2Region->btreeSearch($remoteAddress)['region'];
-        // 执行时长(毫秒)
-        $t2  = Utils::milliseconds();
-        $time      =  $t2 - $t1;
-        $log       = new TLog();
-        $log->setUsername(Auth::admin()->getUsername());
-        $log->setOperation($value['value']);
-        $log->setIp($remoteAddress);
-        $log->setLocation($ip);
-        $log->setMethod($className . '->' . $method . '()');
-        $log->setTime($time);
-        $log->setParams(json_encode($request->getParsedBody()));
-        $log->save();
+            $request = Context::get()->getRequest();
+            $remoteAddress = $request->getServerParams()["remote_addr"];
+            // 设置 IP 地址
+            $ip2Region = new Ip2Region(\Swoft::getAlias('@resource') . '/data/ip2region.db');
+            $ip = $ip2Region->btreeSearch($remoteAddress)['region'];
+            // 执行时长(毫秒)
+            $t2  = Utils::milliseconds();
+            $time      =  $t2 - $t1;
+            $log       = new TLog();
+            $log->setUsername(Auth::admin()->getUsername());
+            $log->setOperation($value['value']);
+            $log->setIp($remoteAddress);
+            $log->setLocation($ip);
+            $log->setMethod($className . '->' . $method . '()');
+            $log->setTime($time);
+            $log->setParams(json_encode($request->getParsedBody()));
+            $log->save();
+        });
         return $result;
     }
 }

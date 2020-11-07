@@ -36,7 +36,8 @@
     "swoft/devtool": "~2.0.0",
     "firebase/php-jwt": "^5.0",
     "intervention/image": "^2.4",
-    "nesbot/carbon": "^2.18"
+    "nesbot/carbon": "^2.18",
+    "gregwar/captcha": "^1.1"
   },
   "require-dev": {
     "swoft/swoole-ide-helper": "dev-master",
