@@ -26,7 +26,7 @@ swoft-rabc是一款简单高效的后台权限管理系统，使用swoft,d2admin
      */
     public function addUser(Request $request)
     {
-        ....
+       // ....
     }
 ```
 当用户没有user:add权限时，系统将抛出UnauthorizedException异常，由HttpExceptionHandler捕获，返回403状态码。
@@ -40,7 +40,7 @@ swoft-rabc是一款简单高效的后台权限管理系统，使用swoft,d2admin
      */
     public function functionName(Request $request)
     {
-        ....
+        //....
     }
 ```
 
@@ -80,3 +80,11 @@ DB_PASSWORD =
 ```dotenv
 php bin/swoft http:start
 ```
+
+### 图片预览
+<img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev.png?raw=true" width="50%"/><img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev-%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BF%A1%E6%81%AF.png?raw=true" width="50%"/>
+<img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev-Redis%E7%9B%91%E6%8E%A7.png?raw=true" width="50%"/><img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev-%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86.png?raw=true" width="50%"/>
+<img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev-%E7%99%BB%E5%BD%95%E6%97%A5%E5%BF%97.png?raw=true" width="50%"/><img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev-%E7%B3%BB%E7%BB%9F%E6%97%A5%E5%BF%97.png?raw=true" width="50%"/>
+<img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev-%E8%8F%9C%E5%8D%95%E7%AE%A1%E7%90%86.png?raw=true" width="50%"/><img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev-%E8%A7%92%E8%89%B2%E7%AE%A1%E7%90%86.png?raw=true" width="50%"/>
+<img src="https://github.com/nilocsu/swoft-rbac/blob/master/images/D2Admin-Dev-%E9%83%A8%E9%97%A8%E7%AE%A1%E7%90%86.png?raw=true" width="50%" />
+
