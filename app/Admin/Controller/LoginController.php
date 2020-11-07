@@ -9,12 +9,10 @@ use App\Admin\Exception\AdminException;
 use App\Admin\Model\Logic\AdministratorLogic;
 use App\Admin\Model\Logic\LoginLogic;
 use App\Admin\Util\ResultData;
-use App\Exception\ApiException;
 use App\Model\Entity\TUser;
 use Gregwar\Captcha\CaptchaBuilder;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Db\DB;
-use Swoft\Http\Message\Response;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Server\Annotation\Mapping\Controller;
 use Swoft\Http\Server\Annotation\Mapping\RequestMethod;
@@ -22,7 +20,7 @@ use Swoft\Http\Server\Annotation\Mapping\RequestMapping;
 use Swoft\Redis\Redis;
 use Swoft\Validator\Annotation\Mapping\Validate;
 use Exception;
-
+use Throwable;
 /**
  * @Controller(prefix="/")
  */
@@ -72,9 +70,9 @@ class LoginController
         if (empty($user)) {
             throw new AdminException($errorMessage, 1);
         }
-//        if (strcmp($user->getPassword(), md5(md5($password))) !== 0) {
-//            throw new AdminException($errorMessage, 1);
-//        }
+        if (strcmp($user->getPassword(), md5(md5($password))) !== 0) {
+            throw new AdminException($errorMessage, 1);
+        }
         if ($user->getStatus() == 0) {
             throw new AdminException('账号已被锁定,请联系管理员！', 1);
         }
@@ -84,7 +82,7 @@ class LoginController
             $this->adminLogic->updateLoginTime($username);
             $this->loginLogic->create($request);
             DB::commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
             return ResultData::failed('server error');
         }
